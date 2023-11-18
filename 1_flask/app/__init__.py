@@ -9,6 +9,7 @@ import tensorflow as tf
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
 
+    # cargar el modelo nueronal y despues usarlo 
     modeloNeuronal = tf.keras.models.load_model('../0_ai/model.keras')
 
     app.config["API_TITLE"] = "Topicos 2 - TP FINAL"
