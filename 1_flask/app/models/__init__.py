@@ -1,0 +1,1 @@
+from models.predict import PredictModel
