@@ -3,10 +3,13 @@ import os
 from  flask import Flask
 from flask_jwt_extended import JWTManager
 from .db import db
+import tensorflow as tf
 
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
+
+    modeloNeuronal = tf.keras.models.load_model('../0_ai/model.keras')
 
     app.config["API_TITLE"] = "Topicos 2 - TP FINAL"
     app.config["API_VERSION"] = "v1"

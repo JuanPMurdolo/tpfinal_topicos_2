@@ -3,6 +3,7 @@ from flask_smorest import abort, Blueprint
 from flask_jwt_extended import jwt_required
 from app.schemas import PredictSchema, PredictFinishedSchema
 from app.models import PredictModel
+from app.__init__ import modeloNeuronal
 
 
 from db import db
