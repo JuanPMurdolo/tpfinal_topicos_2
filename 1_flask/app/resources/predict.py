@@ -25,6 +25,12 @@ class Predict(MethodView):
     def post(self):
         prediction = PredictModel(**predictBlp.validated_args)
         db.session.add(prediction)
+        #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
+        predictionComplete = modeloNeuronal.predict(prediction)
+        if predictionComplete > 0.5:
+            prediction.riesgoCardiaco = True
+        else:
+            prediction.riesgoCardiaco = False
         try:
             db.session.commit()
         except SQLAlchemyError as e:
