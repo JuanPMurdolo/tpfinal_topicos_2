@@ -7,13 +7,34 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 
+
+# Cargamos el dataset
+data = pd.read_csv("redesNeuronales/datos_de_pacientes_5000.csv")
+
+# Separamos características (X) y etiquetas (Y)
+Y = np.array(data["riesgo_cardiaco"])
+X = data.drop(["riesgo_cardiaco"], axis=1)
+X = np.array(X)
+
+# Dividimos los datos en entrenamiento y prueba
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+
+# Creo el modelo
 model = models.Sequential()
 
-model.add(Dense(1, input_dim=1))
+# Añado de a una capa
+model.add(Dense(500, input_dim=7, activation="relu",
+          kernel_initializer="random_normal"))
+model.add(Dense(200, activation="relu"))
+model.add(Dense(1, activation="relu"))
 
+# Compilamos el modelo
 model.compile(optimizer=Adam(learning_rate=0.8), loss='mean_squared_error')
 
-model.summary()
+# Entrenamos el modelo
+history = model.fit(X_train, Y_train, epochs=25,
+                    batch_size=32, validation_data=(X_test, Y_test))
 
-
-
+# Evaluamos el modelo
+test_loss = model.evaluate(X_test, Y_test)
+print(test_loss)
