@@ -43,7 +43,25 @@ history = model.fit(X_train, Y_train, epochs=100,
 test_loss = model.evaluate(X_test, Y_test)
 print(test_loss)
 
-# Predicción de los primeros 3 elementos de entrenamiento
+# Graficamos la precision del modelo en entrenamiento y testeo
+plt.plot(history.history['accuracy'])
+plt.plot(history.history['val_accuracy'])
+plt.title('Precision del Modelo')
+plt.ylabel('Precision')
+plt.xlabel('Epocas')
+plt.legend(['Entrenamiento', 'Prueba'], loc='upper left')
+plt.show()
+
+# Graficamos la perdida del modelo en entrenamiento y testeo
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.title('Perdida del Modelo')
+plt.ylabel('Perdida')
+plt.xlabel('Epocas')
+plt.legend(['Entrenamiento', 'Prueba'], loc='upper left')
+plt.show()
+
+# Predicción de los primeros 5 elementos de entrenamiento
 print("Datos a predecir:")
 print(X_train[:5])
 print("-----------------")
