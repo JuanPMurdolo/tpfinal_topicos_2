@@ -32,7 +32,8 @@ model.add(Dense(64, activation="relu"))
 model.add(Dense(1, activation="sigmoid"))
 
 # Compilamos el modelo
-model.compile(optimizer=Adam(learning_rate=0.8), loss='binary_crossentropy')
+model.compile(optimizer=Adam(learning_rate=0.8),
+              loss='binary_crossentropy', metrics='accuracy')
 
 # Entrenamos el modelo
 history = model.fit(X_train, Y_train, epochs=100,
@@ -44,10 +45,10 @@ print(test_loss)
 
 # Predicción de los primeros 3 elementos de entrenamiento
 print("Datos a predecir:")
-print(X_train[:3])
+print(X_train[:5])
 print("-----------------")
-result = model.predict(X_train[:3])
+result = model.predict(X_train[:5])
 print("Resultados obtenidos:")
 print(result)
 print("Valores correctos:")
-print(Y_train[:3])
+print(Y_train[:5])
