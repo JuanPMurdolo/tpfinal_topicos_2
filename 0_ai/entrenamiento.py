@@ -20,22 +20,23 @@ scaler = MinMaxScaler()
 X = scaler.fit_transform(X)
 
 # Dividimos los datos en entrenamiento y prueba
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X, Y, test_size=0.2, random_state=42)
 
 # Creo el modelo
 model = models.Sequential()
 
 # Añado de a una capa
-model.add(Dense(500, input_dim=7, activation="relu",
+model.add(Dense(64, input_dim=7, activation="relu",
           kernel_initializer="random_normal"))
-model.add(Dense(200, activation="relu"))
-model.add(Dense(1, activation="relu"))
+model.add(Dense(64, activation="relu"))
+model.add(Dense(1, activation="sigmoid"))
 
 # Compilamos el modelo
 model.compile(optimizer=Adam(learning_rate=0.8), loss='mean_squared_error')
 
 # Entrenamos el modelo
-history = model.fit(X_train, Y_train, epochs=50,
+history = model.fit(X_train, Y_train, epochs=100,
                     batch_size=32, validation_data=(X_test, Y_test))
 
 # Evaluamos el modelo
