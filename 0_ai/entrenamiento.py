@@ -32,7 +32,7 @@ model.add(Dense(64, activation="relu"))
 model.add(Dense(1, activation="sigmoid"))
 
 # Compilamos el modelo
-model.compile(optimizer=Adam(learning_rate=0.8),
+model.compile(optimizer=Adam(),
               loss='binary_crossentropy', metrics='accuracy')
 
 # Entrenamos el modelo
