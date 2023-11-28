@@ -37,7 +37,7 @@ model.compile(optimizer=Adam(),
 
 # Entrenamos el modelo
 history = model.fit(X_train, Y_train, epochs=100,
-                    batch_size=32, validation_data=(X_test, Y_test))
+                    batch_size=16, validation_data=(X_test, Y_test))
 
 # Evaluamos el modelo
 test_loss = model.evaluate(X_test, Y_test)
