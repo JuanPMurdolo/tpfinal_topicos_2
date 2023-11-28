@@ -36,8 +36,8 @@ model.compile(optimizer=Adam(),
               loss='binary_crossentropy', metrics='accuracy')
 
 # Entrenamos el modelo
-history = model.fit(X_train, Y_train, epochs=100,
-                    batch_size=16, validation_data=(X_test, Y_test))
+history = model.fit(X_train, Y_train, epochs=70,
+                    batch_size=8, validation_data=(X_test, Y_test))
 
 # Evaluamos el modelo
 test_loss = model.evaluate(X_test, Y_test)
