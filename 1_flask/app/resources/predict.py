@@ -1,9 +1,8 @@
 from flask.views import MethodView
 from flask_smorest import abort, Blueprint
 from flask_jwt_extended import jwt_required
-from app.schemas import PredictSchema, PredictFinishedSchema
-from app.models import PredictModel
-from app.__init__ import modeloNeuronal
+from schemas import PredictSchema, PredictFinishedSchema
+from ..models import PredictModel
 from flask_jwt_extended import get_jwt_identity
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -24,6 +23,8 @@ premium_limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["50 per minute"]
 )
+
+modeloNeuronal = None
 
 @predictBlp.route("/premium/predict")
 class Predict(MethodView):

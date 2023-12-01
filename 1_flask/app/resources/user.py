@@ -2,14 +2,13 @@ from flask import jsonify, request
 from flask.views import MethodView
 from flask_smorest import abort, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity,  create_refresh_token
-from schemas import UserRegisterSchema
-from models.user import UserModel
+from ..schemas import UserRegisterSchema
+from ..models import UserModel
 from schemas import UserSchema
 import os
 import requests
 from sqlalchemy import or_
 from passlib.hash import pbkdf2_sha256 as sha256
-from flask_pymongo import PyMongo
 from sqlalchemy.exc import SQLAlchemyError
 
 
