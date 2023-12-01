@@ -9,7 +9,7 @@ import os
 import requests
 from sqlalchemy import or_
 from passlib.hash import pbkdf2_sha256 as sha256
-from db import db
+from flask_pymongo import PyMongo
 from sqlalchemy.exc import SQLAlchemyError
 
 
