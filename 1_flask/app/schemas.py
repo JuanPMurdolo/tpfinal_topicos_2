@@ -11,3 +11,12 @@ class PredictSchema(Schema):
     
 class PredictFinishedSchema(PredictSchema):
     riesgoCardiaco = fields.Boolean(required=True)
+
+class UserSchema(Schema):
+    id = fields.Int(dump_only=True)
+    username = fields.Str(required=True)
+    password = fields.Str(required=True, load_only=True)
+    type = fields.Str(required=True)
+
+class UserRegisterSchema(UserSchema):
+    email = fields.Email(required=True)

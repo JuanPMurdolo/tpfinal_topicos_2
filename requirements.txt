@@ -8,4 +8,5 @@ flask-smorest
 python-dotenv
 sqlalchemy
 flask-sqlalchemy
-flask-jwt-extended
+flask_jwt_extended
+flask_limiter
