@@ -32,7 +32,6 @@ def convertir_a_entrada_modelo(predict_data):
         predict_data.presionArterial,
         predict_data.colesterol,
         predict_data.azucar,
-        predict_data.masaCorporal,
         predict_data.edad,
         predict_data.sobrepeso,
         predict_data.tabaquismo

@@ -8,7 +8,6 @@ class PredictModel(db.Model):
     presionArterial = db.Column(db.Float)
     colesterol = db.Column(db.Float)
     azucar = db.Column(db.Float)
-    masaCorporal = db.Column(db.Float)
     edad = db.Column(db.Integer)
     sobrepeso = db.Column(db.Boolean)
     tabaquismo = db.Column(db.Boolean)
