@@ -87,7 +87,7 @@ class Predict(MethodView):
 class Predict(MethodView):
     #@jwt_required(fresh=True)
     @limiter.limit("5 per minute")
-    @predictBlp.response(200, PredictFinishedSchema)
+    @predictBlp.response(200, PredictFinishedSchema(many=True))
     def get(self):
         #print(get_jwt_identity())
         #if get_jwt_identity() != "freemium":
