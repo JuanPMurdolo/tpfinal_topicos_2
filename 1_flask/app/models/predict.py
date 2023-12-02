@@ -10,4 +10,6 @@ class PredictModel(db.Model):
     azucar = db.Column(db.Float)
     masaCorporal = db.Column(db.Float)
     edad = db.Column(db.Integer)
+    sobrepeso = db.Column(db.Boolean)
+    tabaquismo = db.Column(db.Boolean)
     riesgoCardiaco = db.Column(db.Boolean)

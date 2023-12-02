@@ -6,9 +6,11 @@ from app.models import PredictModel
 from flask_jwt_extended import get_jwt_identity
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-
+from flask import current_app
+import numpy as np
 from ..db import db
 from sqlalchemy.exc import SQLAlchemyError
+from flask import jsonify
 
 predictBlp = Blueprint(
     "predict", 'predict', description="Operaciones de prediccion"
@@ -24,11 +26,33 @@ premium_limiter = Limiter(
     default_limits=["50 per minute"]
 )
 
-modeloNeuronal = None
+def convertir_a_entrada_modelo(predict_data):
+    # Suponiendo que predict_data es una instancia de PredictModel
+    datos = [
+        predict_data.presionArterial,
+        predict_data.colesterol,
+        predict_data.azucar,
+        predict_data.masaCorporal,
+        predict_data.edad,
+        predict_data.sobrepeso,
+        predict_data.tabaquismo
+    ]
+
+    # Convertir a un formato adecuado para el modelo
+    # Por ejemplo, puedes usar un arreglo NumPy
+    datos_preprocesados = np.array(datos).reshape(1, -1)
+
+    return datos_preprocesados
+
+def usar_modelo_neuronal(predict_data): 
+    modeloNeuronal = current_app.config["modeloNeuronal"]
+    predict_data = convertir_a_entrada_modelo(predict_data)
+    return float(modeloNeuronal.predict(predict_data))
+    
 
 @predictBlp.route("/premium/predict")
 class Predict(MethodView):
-    @jwt_required()
+    @jwt_required(fresh=True)
     @limiter.limit("50 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self):
@@ -37,60 +61,63 @@ class Predict(MethodView):
         else:
             return PredictModel.query.all()
     
-    @jwt_required()
+    @jwt_required(fresh=True)
     @predictBlp.arguments(PredictSchema)
     @limiter.limit("50 per minute")
-    def post(self):
+    def post(self, predict_data):
         if get_jwt_identity() != "premium":
             abort(403, message="No tienes permisos para acceder a esta ruta")
         else:
-            prediction = PredictModel(**predictBlp.validated_args)
-            db.session.add(prediction)
+            prediction = PredictModel(**predict_data)
             #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
-            predictionComplete = modeloNeuronal.predict(prediction)
+            predictionComplete = usar_modelo_neuronal(prediction)
             if predictionComplete > 0.5:
                 prediction.riesgoCardiaco = True
             else:
                 prediction.riesgoCardiaco = False
             try:
+                db.session.add(prediction)
                 db.session.commit()
             except SQLAlchemyError as e:
                 db.session.rollback()
-                abort(400, message=str(e.__dict__["orig"]))
-            return {"message": "Predict"}
+                abort(400, message="Error en la bbdd")
+            return prediction
         
 @predictBlp.route("/freemium/predict")
 class Predict(MethodView):
-    @jwt_required()
+    #@jwt_required(fresh=True)
     @limiter.limit("5 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self):
-        if get_jwt_identity() != "freemium":
-            abort(403, message="No tienes permisos para acceder a esta ruta")
-        else:
+        #print(get_jwt_identity())
+        #if get_jwt_identity() != "freemium":
+            #abort(403, message="No tienes permisos para acceder a esta ruta")
+        #else:
             return PredictModel.query.all()
     
-    @jwt_required()
+    #@jwt_required(fresh=True)
     @predictBlp.arguments(PredictSchema)
     @limiter.limit("5 per minute")
-    def post(self):
-        if get_jwt_identity() != "freemium":
-            abort(403, message="No tienes permisos para acceder a esta ruta")
-        else:
-            prediction = PredictModel(**predictBlp.validated_args)
-            db.session.add(prediction)
+    def post(self, predict_data):
+        #if get_jwt_identity() != "freemium":
+        #    abort(403, message="No tienes permisos para acceder a esta ruta")
+        #else:
+            prediction = PredictModel(**predict_data)
+            #db.session.add(prediction)
             #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
-            predictionComplete = modeloNeuronal.predict(prediction)
+            predictionComplete = usar_modelo_neuronal(prediction)
             if predictionComplete > 0.5:
                 prediction.riesgoCardiaco = True
             else:
                 prediction.riesgoCardiaco = False
+            
             try:
+                db.session.add(prediction)
                 db.session.commit()
             except SQLAlchemyError as e:
                 db.session.rollback()
-                abort(400, message=str(e.__dict__["orig"]))
-            return {"message": "Predict"}
+                abort(400, message="Error en la bbdd")
+            return prediction
     
 @predictBlp.route("/predict/<string:predict_id>")
 class PredictById(MethodView):

@@ -31,7 +31,7 @@ def create_app(test_config=None):
     db.init_app(app)
     migrate = Migrate(app, db)
 
-    app.config["JWT_SECRET_KEY"] = ""
+    app.config["JWT_SECRET_KEY"] = "TOPICOS2KEY"
     jwt = JWTManager(app)
 
     with app.app_context():
