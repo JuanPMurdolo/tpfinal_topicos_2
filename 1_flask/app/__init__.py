@@ -8,7 +8,7 @@ from .db import db
 import tensorflow as tf
 
 from .resources.user import userBlp as UserBlueprint
-from .resources.predict import PredictBlp as PredictBlueprint
+from .resources.predict import predictBlp as PredictBlueprint
 
 
 

@@ -1,2 +1,2 @@
-from models.predict import PredictModel
-from models.user import UserModel
+from .predict import PredictModel
+from .user import UserModel

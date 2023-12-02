@@ -3,17 +3,18 @@ from flask.views import MethodView
 from flask_smorest import abort, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity,  create_refresh_token
 from ..schemas import UserRegisterSchema
-from ..models import UserModel
-from schemas import UserSchema
+from app.models import UserModel
+from ..schemas import UserSchema
 import os
 import requests
 from sqlalchemy import or_
 from passlib.hash import pbkdf2_sha256 as sha256
 from sqlalchemy.exc import SQLAlchemyError
+from ..db import db
 
 
 userBlp = Blueprint(
-    "user", __name__, description="Operaciones de usuario"
+    "user", 'user', description="Operaciones de usuario"
 )
 
 @userBlp.route("/register")

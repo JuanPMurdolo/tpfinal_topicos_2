@@ -1,17 +1,17 @@
 from flask.views import MethodView
 from flask_smorest import abort, Blueprint
 from flask_jwt_extended import jwt_required
-from schemas import PredictSchema, PredictFinishedSchema
-from ..models import PredictModel
+from ..schemas import PredictSchema, PredictFinishedSchema
+from app.models import PredictModel
 from flask_jwt_extended import get_jwt_identity
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from db import db
+from ..db import db
 from sqlalchemy.exc import SQLAlchemyError
 
 predictBlp = Blueprint(
-    "predict", __name__, description="Operaciones de prediccion"
+    "predict", 'predict', description="Operaciones de prediccion"
 )
 
 limiter = Limiter(
@@ -30,7 +30,7 @@ modeloNeuronal = None
 class Predict(MethodView):
     @jwt_required()
     @limiter.limit("50 per minute")
-    @predictBlp.response(200, PredictFinishedSchema, many=True)
+    @predictBlp.response(200, PredictFinishedSchema)
     def get(self):
         if get_jwt_identity() != "premium":
             abort(403, message="No tienes permisos para acceder a esta ruta")
@@ -63,7 +63,7 @@ class Predict(MethodView):
 class Predict(MethodView):
     @jwt_required()
     @limiter.limit("5 per minute")
-    @predictBlp.response(200, PredictFinishedSchema, many=True)
+    @predictBlp.response(200, PredictFinishedSchema)
     def get(self):
         if get_jwt_identity() != "freemium":
             abort(403, message="No tienes permisos para acceder a esta ruta")
