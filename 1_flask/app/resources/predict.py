@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask_smorest import abort, Blueprint
 from flask_jwt_extended import jwt_required
 from ..schemas import PredictSchema, PredictFinishedSchema
-from app.models import PredictModel
+from app.models import PredictModel, UserModel
 from flask_jwt_extended import get_jwt_identity
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -11,6 +11,7 @@ import numpy as np
 from ..db import db
 from sqlalchemy.exc import SQLAlchemyError
 from flask import jsonify
+
 
 predictBlp = Blueprint(
     "predict", 'predict', description="Operaciones de prediccion"
@@ -52,21 +53,22 @@ def usar_modelo_neuronal(predict_data):
 @predictBlp.route("/premium/predict")
 class Predict(MethodView):
     @jwt_required(fresh=True)
-    @limiter.limit("50 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self):
-        if get_jwt_identity() != "premium":
-            abort(403, message="No tienes permisos para acceder a esta ruta")
-        else:
+        current_user = get_jwt_identity()
+        user = UserModel.query.filter_by(username=current_user).first()
+        if user.type == "premium":
+            premium_limiter.limit("50 per minute")
             return PredictModel.query.all()
+        else:
+            abort(403, message="No tienes permisos para acceder a esta ruta")
     
     @jwt_required(fresh=True)
     @predictBlp.arguments(PredictSchema)
-    @limiter.limit("50 per minute")
     def post(self, predict_data):
-        if get_jwt_identity() != "premium":
-            abort(403, message="No tienes permisos para acceder a esta ruta")
-        else:
+        current_user = get_jwt_identity()
+        user = UserModel.query.filter_by(username=current_user).first()
+        if user.type == "premium":
             prediction = PredictModel(**predict_data)
             #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
             predictionComplete = usar_modelo_neuronal(prediction)
@@ -81,26 +83,29 @@ class Predict(MethodView):
                 db.session.rollback()
                 abort(400, message="Error en la bbdd")
             return prediction
+        else:
+            abort(403, message="No tienes permisos para acceder a esta ruta")
         
 @predictBlp.route("/freemium/predict")
 class Predict(MethodView):
     #@jwt_required(fresh=True)
-    @limiter.limit("5 per minute")
     @predictBlp.response(200, PredictFinishedSchema(many=True))
     def get(self):
-        #print(get_jwt_identity())
-        #if get_jwt_identity() != "freemium":
-            #abort(403, message="No tienes permisos para acceder a esta ruta")
-        #else:
+        current_user = get_jwt_identity()
+        user = UserModel.query.filter_by(username=current_user).first()
+        if user.type == "freemium":
+            limiter.limit("5 per minute")
             return PredictModel.query.all()
-    
+        else:
+            abort(403, message="No tienes permisos para acceder a esta ruta")
+
     #@jwt_required(fresh=True)
     @predictBlp.arguments(PredictSchema)
-    @limiter.limit("5 per minute")
     def post(self, predict_data):
-        #if get_jwt_identity() != "freemium":
-        #    abort(403, message="No tienes permisos para acceder a esta ruta")
-        #else:
+        current_user = get_jwt_identity()
+        user = UserModel.query.filter_by(username=current_user).first()
+        if user.type == "freemium":
+            limiter.limit("5 per minute")
             prediction = PredictModel(**predict_data)
             #db.session.add(prediction)
             #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
@@ -109,7 +114,6 @@ class Predict(MethodView):
                 prediction.riesgoCardiaco = True
             else:
                 prediction.riesgoCardiaco = False
-            
             try:
                 db.session.add(prediction)
                 db.session.commit()
@@ -117,6 +121,8 @@ class Predict(MethodView):
                 db.session.rollback()
                 abort(400, message="Error en la bbdd")
             return prediction
+        else:
+            abort(403, message="No tienes permisos para acceder a esta ruta")
     
 @predictBlp.route("/predict/<string:predict_id>")
 class PredictById(MethodView):

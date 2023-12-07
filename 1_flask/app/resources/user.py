@@ -4,7 +4,7 @@ from flask_smorest import abort, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt, get_jwt_identity,  create_refresh_token
 from ..schemas import UserRegisterSchema
 from app.models import UserModel
-from ..schemas import UserSchema
+from ..schemas import UserSchema,UserSchemaBasic, UserRegisterSchema
 import os
 import requests
 from sqlalchemy import or_
@@ -35,7 +35,6 @@ class UserRegister(MethodView):
         try:
             db.session.add(user)
             db.session.commit()
-            #current_app.queue.enqueue(send_registration_email, user)
 
         except SQLAlchemyError:
             abort(500, message="Internal server error.")
@@ -44,7 +43,7 @@ class UserRegister(MethodView):
 
 @userBlp.route("/login")
 class UserLogin(MethodView):
-    @userBlp.arguments(UserSchema)
+    @userBlp.arguments(UserSchemaBasic)
     @userBlp.response(200, UserSchema)
     def post(self, user_data):
         user = UserModel.query.filter(UserModel.username == user_data["username"]).first()
@@ -57,7 +56,7 @@ class UserLogin(MethodView):
 
 @userBlp.route("/SwitchToPremium")
 class UserLogin(MethodView):
-    @userBlp.arguments(UserSchema)
+    @userBlp.arguments(UserSchemaBasic)
     @userBlp.response(200, UserSchema)
     def post(self, user_data):
         user = UserModel.query.filter(UserModel.username == user_data["username"]).first()
