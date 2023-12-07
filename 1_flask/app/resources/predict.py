@@ -60,8 +60,10 @@ class PredictPremium(MethodView):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
         if user.type == "premium":
-            premium_limiter.limit("50 per minute")
-            return PredictModel.query.all()
+            if premium_limiter.hit("premium_user_limit"):
+                return PredictModel.query.all()
+            else:
+                abort(429, message="Excedido el límite de solicitudes")
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
     
@@ -71,21 +73,24 @@ class PredictPremium(MethodView):
     def post(self, predict_data):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
-        if user.type == "premium" and user != None:
-            prediction = PredictModel(**predict_data)
-            #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
-            predictionComplete = usar_modelo_neuronal(prediction)
-            if predictionComplete > 0.5:
-                prediction.riesgoCardiaco = True
+        if user.type == "premium":
+            if premium_limiter.hit("premium_user_limit"):
+                prediction = PredictModel(**predict_data)
+                #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
+                predictionComplete = usar_modelo_neuronal(prediction)
+                if predictionComplete > 0.5:
+                    prediction.riesgoCardiaco = True
+                else:
+                    prediction.riesgoCardiaco = False
+                try:
+                    db.session.add(prediction)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    abort(400, message="Error en la bbdd")
+                return prediction
             else:
-                prediction.riesgoCardiaco = False
-            try:
-                db.session.add(prediction)
-                db.session.commit()
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                abort(400, message="Error en la bbdd")
-            return prediction
+                abort(429, message="Excedido el límite de solicitudes")
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
         
@@ -98,7 +103,10 @@ class PredictFreemium(MethodView):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
         if user.type == "freemium":
-            return PredictModel.query.all()
+            if limiter.hit("freemium_user_limit"):
+                return PredictModel.query.all()
+            else:
+                abort(429, message="Excedido el límite de solicitudes")
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
 
@@ -110,21 +118,24 @@ class PredictFreemium(MethodView):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(id=current_user).first()
         if user.type == "freemium":
-            prediction = PredictModel(**predict_data)
-            #db.session.add(prediction)
-            #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
-            predictionComplete = usar_modelo_neuronal(prediction)
-            if predictionComplete > 0.5:
-                prediction.riesgoCardiaco = True
+            if limiter.hit("freemium_user_limit"):
+                prediction = PredictModel(**predict_data)
+                #db.session.add(prediction)
+                #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
+                predictionComplete = usar_modelo_neuronal(prediction)
+                if predictionComplete > 0.5:
+                    prediction.riesgoCardiaco = True
+                else:
+                    prediction.riesgoCardiaco = False
+                try:
+                    db.session.add(prediction)
+                    db.session.commit()
+                except SQLAlchemyError as e:
+                    db.session.rollback()
+                    abort(400, message="Error en la bbdd")
+                return prediction
             else:
-                prediction.riesgoCardiaco = False
-            try:
-                db.session.add(prediction)
-                db.session.commit()
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                abort(400, message="Error en la bbdd")
-            return prediction
+                abort(429, message="Excedido el límite de solicitudes")
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
     
@@ -137,7 +148,10 @@ class PredictByIdFreemium(MethodView):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
         if user.type == "freemium":
-            return PredictModel.query.get_or_404(predict_id)
+            if limiter.hit("freemium_user_limit"):
+                return PredictModel.query.get_or_404(predict_id)
+            else:
+                abort(429, message="Excedido el límite de solicitudes")
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
 
@@ -151,7 +165,10 @@ class PredictByIdPremium(MethodView):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
         if user.type == "premium":
-            return PredictModel.query.get_or_404(predict_id)
+            if premium_limiter.hit("premium_user_limit"):
+                return PredictModel.query.get_or_404(predict_id)
+            else:
+                abort(429, message="Excedido el límite de solicitudes")
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
 

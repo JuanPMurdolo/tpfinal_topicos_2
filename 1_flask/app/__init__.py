@@ -18,13 +18,11 @@ def create_app(test_config=None):
     app = Flask(__name__)
 
     limiter = Limiter(
-        app,
         key_func=get_remote_address,
         default_limits=["5 per minute"],
     )
 
     premium_limiter = Limiter(
-        app,
         key_func=get_remote_address,
         default_limits=["50 per minute"]
     )
