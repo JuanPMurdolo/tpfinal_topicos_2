@@ -66,7 +66,7 @@ class PredictPremium(MethodView):
             abort(403, message="No tienes permisos para acceder a esta ruta")
     
     @jwt_required(fresh=True)
-    @premium_limiter.limit("50 per minute")
+    @premium_limiter.limit("50 per minute", key_func=lambda : get_jwt_identity())
     @predictBlp.arguments(PredictSchema)
     def post(self, predict_data):
         current_user = get_jwt_identity()
@@ -104,7 +104,7 @@ class PredictFreemium(MethodView):
 
     @jwt_required(fresh=True)
     @predictBlp.arguments(PredictSchema)
-    @limiter.limit("5 per minute")
+    @limiter.limit("5 per minute", key_func=lambda : get_jwt_identity())
     @predictBlp.response(200, PredictFinishedSchema)
     def post(self, predict_data):
         current_user = get_jwt_identity()
