@@ -14,7 +14,7 @@ from flask import jsonify
 
 
 premiumBlp = Blueprint(
-    "predict", 'predict', url_prefix="premium", description="Operaciones de prediccion"
+    "Premium", 'premium', url_prefix="/premium", description="Operaciones de prediccion Premiunm"
 )
 
 
@@ -40,8 +40,6 @@ def usar_modelo_neuronal(predict_data):
     modeloNeuronal = current_app.config["modeloNeuronal"]
     predict_data = convertir_a_entrada_modelo(predict_data)
     return float(modeloNeuronal.predict(predict_data))
-
-limiter = current_app.config["LIMITER"]
 
 @premiumBlp.route("/predict")
 class PredictPremium(MethodView):

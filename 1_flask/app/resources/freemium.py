@@ -14,7 +14,7 @@ from flask import jsonify
 
 
 freemiumBlp = Blueprint(
-    "predict", 'predict', url_prefix="freemium", description="Operaciones de prediccion"
+    "Freemium", 'freemium', url_prefix="/freemium", description="Operaciones de prediccion"
 )
 
 
