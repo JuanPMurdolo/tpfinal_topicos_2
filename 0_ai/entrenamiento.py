@@ -7,6 +7,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
+import pickle
 
 # Cargamos el dataset
 data = pd.read_csv("redesNeuronales/datos_de_pacientes_5000.csv")
@@ -70,3 +71,10 @@ print("Resultados obtenidos:")
 print(result)
 print("Valores correctos:")
 print(Y_train[:5])
+
+model_pkl_file = "model.pkl"
+
+with open(model_pkl_file, 'wb') as file:
+    pickle.dump(model, file)
+
+model.save("model.keras")
