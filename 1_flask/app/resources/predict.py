@@ -17,11 +17,6 @@ predictBlp = Blueprint(
     "predict", 'predict', description="Operaciones de prediccion"
 )
 
-limiter = Limiter(
-    get_remote_address,
-    default_limits=["200 per day", "50 per hour"],
-    storage_uri="memory://",
-)
 
 def convertir_a_entrada_modelo(predict_data):
     # Suponiendo que predict_data es una instancia de PredictModel
@@ -45,7 +40,8 @@ def usar_modelo_neuronal(predict_data):
     modeloNeuronal = current_app.config["modeloNeuronal"]
     predict_data = convertir_a_entrada_modelo(predict_data)
     return float(modeloNeuronal.predict(predict_data))
-    
+
+limiter = current_app.config["LIMITER"]
 
 @predictBlp.route("/premium/predict")
 class PredictPremium(MethodView):
@@ -56,7 +52,6 @@ class PredictPremium(MethodView):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
         if user.type == "premium":
-            premium_limiter.limit("50 per minute")
             return PredictModel.query.all()
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")

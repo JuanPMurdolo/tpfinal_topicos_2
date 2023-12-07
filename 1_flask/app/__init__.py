@@ -20,9 +20,10 @@ def create_app(test_config=None):
     limiter = Limiter(
         get_remote_address,
         app=app,
-        default_limits=["200 per day", "50 per hour"],
         storage_uri="memory://",
     )
+
+    app.config["LIMITER"] = limiter
 
     # cargar el modelo nueronal y despues usarlo 
     modeloNeuronal = tf.keras.models.load_model('../0_ai/model.keras')
