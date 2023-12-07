@@ -10,20 +10,13 @@ from .db import db
 import tensorflow as tf
 
 from .resources.user import userBlp as UserBlueprint
-from .resources.predict import predictBlp as PredictBlueprint
+from .resources.freemium import freemiumBlp as freemiumBlueprint
+from .resources.premium import premiumBlp as premiumBlueprint
 
 
 
 def create_app(test_config=None):
     app = Flask(__name__)
-
-    limiter = Limiter(
-        get_remote_address,
-        app=app,
-        storage_uri="memory://",
-    )
-
-    app.config["LIMITER"] = limiter
 
     # cargar el modelo nueronal y despues usarlo 
     modeloNeuronal = tf.keras.models.load_model('../0_ai/model.keras')
@@ -48,10 +41,20 @@ def create_app(test_config=None):
         db.create_all()
 
     api = Api(app)
+
+    limiter = Limiter(
+        get_remote_address,
+        app=app,
+        storage_uri="memory://",
+    )
+
+    limiter.limit("50/minute")(premiumBlueprint)
+    limiter.limit("5/minute")(freemiumBlueprint)
     
     #blueprints
     api.register_blueprint(UserBlueprint)
-    api.register_blueprint(PredictBlueprint)
+    api.register_blueprint(freemiumBlueprint)
+    api.register_blueprint(premiumBlueprint)
     
     
     return app

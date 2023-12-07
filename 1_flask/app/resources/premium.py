@@ -13,8 +13,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from flask import jsonify
 
 
-predictBlp = Blueprint(
-    "predict", 'predict', description="Operaciones de prediccion"
+premiumBlp = Blueprint(
+    "predict", 'predict', url_prefix="premium", description="Operaciones de prediccion"
 )
 
 
@@ -43,11 +43,10 @@ def usar_modelo_neuronal(predict_data):
 
 limiter = current_app.config["LIMITER"]
 
-@predictBlp.route("/premium/predict")
+@premiumBlp.route("/predict")
 class PredictPremium(MethodView):
     @jwt_required(fresh=True)
-    @limiter.limit("50/minute")
-    @predictBlp.response(200, PredictFinishedSchema)
+    @premiumBlp.response(200, PredictFinishedSchema)
     def get(self):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
@@ -57,8 +56,7 @@ class PredictPremium(MethodView):
             abort(403, message="No tienes permisos para acceder a esta ruta")
     
     @jwt_required(fresh=True)
-    @limiter.limit("50/minute")
-    @predictBlp.arguments(PredictSchema)
+    @premiumBlp.arguments(PredictSchema)
     def post(self, predict_data):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
@@ -80,64 +78,10 @@ class PredictPremium(MethodView):
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
         
-@predictBlp.route("/freemium/predict")
-class PredictFreemium(MethodView):
-    @jwt_required(fresh=True)
-    @limiter.limit("5/minute")
-    @predictBlp.response(200, PredictFinishedSchema(many=True))
-    def get(self):
-        current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(username=current_user).first()
-        if user.type == "freemium":
-            return PredictModel.query.all()
-        else:
-            abort(403, message="No tienes permisos para acceder a esta ruta")
-
-    @jwt_required(fresh=True)
-    @predictBlp.arguments(PredictSchema)
-    @limiter.limit("5 per minute", key_func=lambda : get_jwt_identity())
-    @predictBlp.response(200, PredictFinishedSchema)
-    def post(self, predict_data):
-        current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(id=current_user).first()
-        if user.type == "freemium":
-            prediction = PredictModel(**predict_data)
-            #db.session.add(prediction)
-            #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
-            predictionComplete = usar_modelo_neuronal(prediction)
-            if predictionComplete > 0.5:
-                prediction.riesgoCardiaco = True
-            else:
-                prediction.riesgoCardiaco = False
-            try:
-                db.session.add(prediction)
-                db.session.commit()
-            except SQLAlchemyError as e:
-                db.session.rollback()
-                abort(400, message="Error en la bbdd")
-            return prediction
-        else:
-            abort(403, message="No tienes permisos para acceder a esta ruta")
-    
-@predictBlp.route("/freemium/predictById/<string:predict_id>")
-class PredictByIdFreemium(MethodView):
-    @jwt_required(fresh=True)
-    @limiter.limit("5 per minute")
-    @predictBlp.response(200, PredictFinishedSchema)
-    def get(self, predict_id: str):
-        current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(username=current_user).first()
-        if user.type == "freemium":
-            return PredictModel.query.get_or_404(predict_id)
-        else:
-            abort(403, message="No tienes permisos para acceder a esta ruta")
-
-        
-@predictBlp.route("/premium/predictById/<string:predict_id>")
+@premiumBlp.route("/predictById/<string:predict_id>")
 class PredictByIdPremium(MethodView):
     @jwt_required(fresh=True)
-    @limiter.limit("50/minute")
-    @predictBlp.response(200, PredictFinishedSchema)
+    @premiumBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
