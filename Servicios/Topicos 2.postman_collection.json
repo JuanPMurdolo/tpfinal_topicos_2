@@ -44,6 +44,24 @@
 						"url": "http://127.0.0.1:5000/login"
 					},
 					"response": []
+				},
+				{
+					"name": "SwitchToPremium",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\" : \"test\",\r\n    \"password\" : \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://127.0.0.1:5000/SwitchToPremium"
+					},
+					"response": []
 				}
 			]
 		},
@@ -77,6 +95,15 @@
 									}
 								},
 								"url": "http://127.0.0.1:5000/premium/predict"
+							},
+							"response": []
+						},
+						{
+							"name": "Get By ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "http://127.0.0.1:5000/premium/predictById/1"
 							},
 							"response": []
 						}
@@ -113,6 +140,15 @@
 									}
 								},
 								"url": "http://127.0.0.1:5000/freemium/predict"
+							},
+							"response": []
+						},
+						{
+							"name": "Get By ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": "http://127.0.0.1:5000/freemium/predictById/1"
 							},
 							"response": []
 						}

@@ -124,17 +124,29 @@ class Predict(MethodView):
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
     
-@predictBlp.route("/predict/<string:predict_id>")
+@predictBlp.route("/freemium/predictById/<string:predict_id>")
 class PredictById(MethodView):
-    @jwt_required()
+    @predictBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
-        return {"message": "PredictById"}
-    
-    @jwt_required()
-    def delete(self, predict_id: str):
-        return {"message": "PredictById"}
-    
-    @jwt_required()
-    def put(self, predict_id: str):
-        return {"message": "PredictById"}
+        current_user = get_jwt_identity()
+        user = UserModel.query.filter_by(username=current_user).first()
+        if user.type == "freemium":
+            limiter.limit("5 per minute")
+            return PredictModel.query.get_or_404(predict_id)
+        else:
+            abort(403, message="No tienes permisos para acceder a esta ruta")
+
+        
+@predictBlp.route("/premium/predictById/<string:predict_id>")
+class PredictById(MethodView):
+    @predictBlp.response(200, PredictFinishedSchema)
+    def get(self, predict_id: str):
+        current_user = get_jwt_identity()
+        user = UserModel.query.filter_by(username=current_user).first()
+        if user.type == "premium":
+            limiter.limit("5 per minute")
+            return PredictModel.query.get_or_404(predict_id)
+        else:
+            abort(403, message="No tienes permisos para acceder a esta ruta")
+
     
