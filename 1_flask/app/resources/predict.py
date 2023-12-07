@@ -54,6 +54,7 @@ def usar_modelo_neuronal(predict_data):
 @predictBlp.route("/premium/predict")
 class Predict(MethodView):
     @jwt_required(fresh=True)
+    @premium_limiter.limit("50 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self):
         current_user = get_jwt_identity()
@@ -65,6 +66,7 @@ class Predict(MethodView):
             abort(403, message="No tienes permisos para acceder a esta ruta")
     
     @jwt_required(fresh=True)
+    @premium_limiter.limit("50 per minute")
     @predictBlp.arguments(PredictSchema)
     def post(self, predict_data):
         current_user = get_jwt_identity()
@@ -92,24 +94,24 @@ class Predict(MethodView):
 @predictBlp.route("/freemium/predict")
 class Predict(MethodView):
     @jwt_required(fresh=True)
+    @limiter.limit("5 per minute")
     @predictBlp.response(200, PredictFinishedSchema(many=True))
     def get(self):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
         if user.type == "freemium":
-            limiter.limit("5 per minute")
             return PredictModel.query.all()
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
 
     @jwt_required(fresh=True)
     @predictBlp.arguments(PredictSchema)
+    @limiter.limit("5 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def post(self, predict_data):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(id=current_user).first()
         if user.type == "freemium":
-            limiter.limit("5 per minute")
             prediction = PredictModel(**predict_data)
             #db.session.add(prediction)
             #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
@@ -131,12 +133,12 @@ class Predict(MethodView):
 @predictBlp.route("/freemium/predictById/<string:predict_id>")
 class PredictById(MethodView):
     @jwt_required(fresh=True)
+    @limiter.limit("5 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
         if user.type == "freemium":
-            limiter.limit("5 per minute")
             return PredictModel.query.get_or_404(predict_id)
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
@@ -145,12 +147,12 @@ class PredictById(MethodView):
 @predictBlp.route("/premium/predictById/<string:predict_id>")
 class PredictById(MethodView):
     @jwt_required(fresh=True)
+    @premium_limiter.limit("50 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
         if user.type == "premium":
-            limiter.limit("5 per minute")
             return PredictModel.query.get_or_404(predict_id)
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
