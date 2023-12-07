@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\" : \"test\",\r\n    \"password\" : \"test\",\r\n    \"email\" : \"test@test.com\",\r\n    \"type\" : \"freemium\"\r\n}",
+							"raw": "{\r\n    \"username\" : \"test\",\r\n    \"password\" : \"test\",\r\n    \"email\" : \"test@test.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -87,7 +87,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"nombre\" : \"Natalia Natalia\",\r\n    \"presionArterial\" : 1,\r\n    \"colesterol\" : 1,\r\n    \"azucar\" : 1,\r\n    \"masaCorporal\" : 1,\r\n    \"edad\" : 27,\r\n    \"sobrepeso\" : \"True\",\r\n    \"tabaquismo\" : \"True\"\r\n}",
+									"raw": "{\r\n    \"nombre\" : \"Natalia Jimena\",\r\n    \"presionArterial\" : 1.0,\r\n    \"colesterol\" : 2,\r\n    \"azucar\" : 2,\r\n    \"edad\" : 54,\r\n    \"sobrepeso\" : \"False\",\r\n    \"tabaquismo\" : \"False\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -125,14 +125,16 @@
 							"name": "Post",
 							"request": {
 								"auth": {
-									"type": "inherit",
-									"inherit": {}
+									"type": "bearer",
+									"bearer": {
+										"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNzAxOTkzMjkyLCJqdGkiOiI0OWM2NTVjZC05YzY0LTQyZGEtODY1OS0yNGViZmJkNzgyMTIiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoyLCJuYmYiOjE3MDE5OTMyOTIsImV4cCI6MTcwMTk5NDE5Mn0.qu_bWFS22acuktw7D-D80V5rbUy8WYJyD0dF0DNX15M"
+									}
 								},
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"nombre\" : \"Natalia Natalia\",\r\n    \"presionArterial\" : 1,\r\n    \"colesterol\" : 1,\r\n    \"azucar\" : 1,\r\n    \"masaCorporal\" : 1,\r\n    \"edad\" : 27,\r\n    \"sobrepeso\" : \"True\",\r\n    \"tabaquismo\" : \"True\"\r\n}",
+									"raw": "{\r\n    \"nombre\" : \"Natalia Jimena\",\r\n    \"presionArterial\" : 1.0,\r\n    \"colesterol\" : 2,\r\n    \"azucar\" : 2,\r\n    \"edad\" : 54,\r\n    \"sobrepeso\" : \"False\",\r\n    \"tabaquismo\" : \"False\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
