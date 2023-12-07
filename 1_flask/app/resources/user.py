@@ -44,7 +44,6 @@ class UserRegister(MethodView):
 @userBlp.route("/login")
 class UserLogin(MethodView):
     @userBlp.arguments(UserSchemaBasic)
-    @userBlp.response(200, UserSchema)
     def post(self, user_data):
         user = UserModel.query.filter(UserModel.username == user_data["username"]).first()
         if user and sha256.verify(user_data["password"], user.password):

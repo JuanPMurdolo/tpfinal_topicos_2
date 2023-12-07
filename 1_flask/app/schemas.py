@@ -6,7 +6,6 @@ class PredictSchema(Schema):
     presionArterial = fields.Float(required=True)
     colesterol = fields.Float(required=True)
     azucar = fields.Float(required=True)
-    masaCorporal = fields.Float(required=True)
     edad = fields.Int(required=True)
     sobrepeso = fields.Boolean(required=True)
     tabaquismo = fields.Boolean(required=True)

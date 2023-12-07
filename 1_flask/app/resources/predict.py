@@ -30,12 +30,13 @@ premium_limiter = Limiter(
 def convertir_a_entrada_modelo(predict_data):
     # Suponiendo que predict_data es una instancia de PredictModel
     datos = [
-        predict_data.presionArterial,
+        0,
         predict_data.colesterol,
+        predict_data.presionArterial,
         predict_data.azucar,
         predict_data.edad,
         predict_data.sobrepeso,
-        predict_data.tabaquismo
+        predict_data.tabaquismo,
     ]
 
     # Convertir a un formato adecuado para el modelo
@@ -68,7 +69,9 @@ class Predict(MethodView):
     def post(self, predict_data):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
-        if user.type == "premium":
+        print("USER")
+        print(user)
+        if user.type == "premium" and user != None:
             prediction = PredictModel(**predict_data)
             #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
             predictionComplete = usar_modelo_neuronal(prediction)
@@ -88,7 +91,7 @@ class Predict(MethodView):
         
 @predictBlp.route("/freemium/predict")
 class Predict(MethodView):
-    #@jwt_required(fresh=True)
+    @jwt_required(fresh=True)
     @predictBlp.response(200, PredictFinishedSchema(many=True))
     def get(self):
         current_user = get_jwt_identity()
@@ -99,11 +102,12 @@ class Predict(MethodView):
         else:
             abort(403, message="No tienes permisos para acceder a esta ruta")
 
-    #@jwt_required(fresh=True)
+    @jwt_required(fresh=True)
     @predictBlp.arguments(PredictSchema)
+    @predictBlp.response(200, PredictFinishedSchema)
     def post(self, predict_data):
         current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(username=current_user).first()
+        user = UserModel.query.filter_by(id=current_user).first()
         if user.type == "freemium":
             limiter.limit("5 per minute")
             prediction = PredictModel(**predict_data)
@@ -126,6 +130,7 @@ class Predict(MethodView):
     
 @predictBlp.route("/freemium/predictById/<string:predict_id>")
 class PredictById(MethodView):
+    @jwt_required(fresh=True)
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
         current_user = get_jwt_identity()
@@ -139,6 +144,7 @@ class PredictById(MethodView):
         
 @predictBlp.route("/premium/predictById/<string:predict_id>")
 class PredictById(MethodView):
+    @jwt_required(fresh=True)
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
         current_user = get_jwt_identity()
