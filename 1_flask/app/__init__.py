@@ -18,13 +18,10 @@ def create_app(test_config=None):
     app = Flask(__name__)
 
     limiter = Limiter(
-        key_func=get_remote_address,
-        default_limits=["5 per minute"],
-    )
-
-    premium_limiter = Limiter(
-        key_func=get_remote_address,
-        default_limits=["50 per minute"]
+        get_remote_address,
+        app=app,
+        default_limits=["200 per day", "50 per hour"],
+        storage_uri="memory://",
     )
 
     # cargar el modelo nueronal y despues usarlo 

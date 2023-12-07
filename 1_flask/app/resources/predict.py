@@ -18,13 +18,9 @@ predictBlp = Blueprint(
 )
 
 limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=["5 per minute"],
-)
-
-premium_limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=["50 per minute"]
+    get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://",
 )
 
 def convertir_a_entrada_modelo(predict_data):
@@ -54,7 +50,7 @@ def usar_modelo_neuronal(predict_data):
 @predictBlp.route("/premium/predict")
 class PredictPremium(MethodView):
     @jwt_required(fresh=True)
-    @premium_limiter.limit("50 per minute")
+    @limiter.limit("50/minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self):
         current_user = get_jwt_identity()
@@ -66,7 +62,7 @@ class PredictPremium(MethodView):
             abort(403, message="No tienes permisos para acceder a esta ruta")
     
     @jwt_required(fresh=True)
-    @premium_limiter.limit("50 per minute", key_func=lambda : get_jwt_identity())
+    @limiter.limit("50/minute")
     @predictBlp.arguments(PredictSchema)
     def post(self, predict_data):
         current_user = get_jwt_identity()
@@ -92,7 +88,7 @@ class PredictPremium(MethodView):
 @predictBlp.route("/freemium/predict")
 class PredictFreemium(MethodView):
     @jwt_required(fresh=True)
-    @limiter.limit("5 per minute")
+    @limiter.limit("5/minute")
     @predictBlp.response(200, PredictFinishedSchema(many=True))
     def get(self):
         current_user = get_jwt_identity()
@@ -145,7 +141,7 @@ class PredictByIdFreemium(MethodView):
 @predictBlp.route("/premium/predictById/<string:predict_id>")
 class PredictByIdPremium(MethodView):
     @jwt_required(fresh=True)
-    @premium_limiter.limit("50 per minute")
+    @limiter.limit("50/minute")
     @predictBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
         current_user = get_jwt_identity()
