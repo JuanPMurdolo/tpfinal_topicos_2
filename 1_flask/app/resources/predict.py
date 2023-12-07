@@ -52,7 +52,7 @@ def usar_modelo_neuronal(predict_data):
     
 
 @predictBlp.route("/premium/predict")
-class Predict(MethodView):
+class PredictPremium(MethodView):
     @jwt_required(fresh=True)
     @premium_limiter.limit("50 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
@@ -71,8 +71,6 @@ class Predict(MethodView):
     def post(self, predict_data):
         current_user = get_jwt_identity()
         user = UserModel.query.filter_by(username=current_user).first()
-        print("USER")
-        print(user)
         if user.type == "premium" and user != None:
             prediction = PredictModel(**predict_data)
             #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
@@ -92,7 +90,7 @@ class Predict(MethodView):
             abort(403, message="No tienes permisos para acceder a esta ruta")
         
 @predictBlp.route("/freemium/predict")
-class Predict(MethodView):
+class PredictFreemium(MethodView):
     @jwt_required(fresh=True)
     @limiter.limit("5 per minute")
     @predictBlp.response(200, PredictFinishedSchema(many=True))
@@ -131,7 +129,7 @@ class Predict(MethodView):
             abort(403, message="No tienes permisos para acceder a esta ruta")
     
 @predictBlp.route("/freemium/predictById/<string:predict_id>")
-class PredictById(MethodView):
+class PredictByIdFreemium(MethodView):
     @jwt_required(fresh=True)
     @limiter.limit("5 per minute")
     @predictBlp.response(200, PredictFinishedSchema)
@@ -145,7 +143,7 @@ class PredictById(MethodView):
 
         
 @predictBlp.route("/premium/predictById/<string:predict_id>")
-class PredictById(MethodView):
+class PredictByIdPremium(MethodView):
     @jwt_required(fresh=True)
     @premium_limiter.limit("50 per minute")
     @predictBlp.response(200, PredictFinishedSchema)

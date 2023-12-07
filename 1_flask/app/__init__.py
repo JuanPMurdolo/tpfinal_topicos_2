@@ -4,6 +4,8 @@ from  flask import Flask, request
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
 from flask_smorest import Api, Blueprint, abort
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from .db import db
 import tensorflow as tf
 
@@ -14,6 +16,18 @@ from .resources.predict import predictBlp as PredictBlueprint
 
 def create_app(test_config=None):
     app = Flask(__name__)
+
+    limiter = Limiter(
+        app,
+        key_func=get_remote_address,
+        default_limits=["5 per minute"],
+    )
+
+    premium_limiter = Limiter(
+        app,
+        key_func=get_remote_address,
+        default_limits=["50 per minute"]
+    )
 
     # cargar el modelo nueronal y despues usarlo 
     modeloNeuronal = tf.keras.models.load_model('../0_ai/model.keras')
