@@ -65,3 +65,25 @@ class UserLogin(MethodView):
             return {"message": "User is now premium"}
         else:
             abort(401, message="Invalid username or password.")
+
+@userBlp.route("/SwitchToFreemium")
+class UserLogin(MethodView):
+    @userBlp.arguments(UserSchemaBasic)
+    @userBlp.response(200, UserSchema)
+    def post(self, user_data):
+        user = UserModel.query.filter(UserModel.username == user_data["username"]).first()
+        if user and sha256.verify(user_data["password"], user.password):
+            user.type = "freemium"
+            db.session.commit()
+            return {"message": "User is now freemium"}
+        else:
+            abort(401, message="Invalid username or password.")
+
+@blp.route("/refresh")
+class UserRefresh(MethodView):
+    @jwt_required(refresh=True)
+    @blp.response(200, UserSchema)
+    def post(self):
+        user = get_jwt_identity()
+        access_token = create_access_token(identity=user, fresh=False)
+        return {"access_token": access_token}
