@@ -71,3 +71,27 @@ Si.
 # Notas de los alumnos
 
 Vamos a usar SQLITE3 para no usar mongo por una cuestion de comodidad.
+
+# Instrucciones
+* Para correr el entrenamiento hay que mover el archivo datos_de_pacientes_5000.csv a la carpeta redesNeuronales.
+* Se puede correr con un venv, o se puede directamente instalar todo lo necesario eso es a gusto.
+* Se puede utilizar postman, hay una coleccion en /Servicios que funciona. Para correrlo es necesario registrar un usuario, logearse y utilizar el token.
+* Se puede cambiar el tipo de usuario de freemium a premium y viceversa.
+
+# Como correr el programa
+# Opcion 1: venv.
+    * Correr el siguiente comando en el directorio root: python -m venv .venv (dependiendo las versiones y plataformas el comando tambien puede ser python3 -m env .venv o inclusive python((version)) -m env .venv donde 3.10 puede ser la (Version))
+    * Confirmar en visual studio code que el interprete es el .venv (Deberia aparecer .venv en la consola para confirmarlo). Requiere reiniciar la consola para que los cambios surtan efecto.
+    * correr el comando pip install -r requirements.txt en la raiz para que se instalen todas las librerias necesarias.
+    * Para entrenar el modelo: 
+        1. cd 0_ai.
+        2. Mover el archivo datos_de_paciente_5000.csv que se encuentra en el directorio 0_ai, a la carpeta redesNeuronales. (0_ai/redesNeuronales)
+        3. python (python3 o python(version)) entrenamiento.py
+        4. El modelo que esta subido ya esta entrenado para funcionar con los servicios de flask pero en caso de querer correrlo nuevamente no deberia haber problemas
+    * Para correr los servicios:
+        1. cd 1_flask
+        2. flask run
+        3. Utilizar postman e importar la coleccion TPFINAL_TOPICOS_2/Servicios/Topicos 2.postman_collection.json
+        4. Correr el login (El usuario test/test ya existe como un usuario premium)
+        5. probar utilizando en postman el token bearer con el token recibido del login.
+
