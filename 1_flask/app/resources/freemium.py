@@ -47,7 +47,7 @@ class PredictFreemium(MethodView):
     @freemiumBlp.response(200, PredictFinishedSchema(many=True))
     def get(self):
         current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(username=current_user).first()
+        user = UserModel.query.filter_by(id=current_user).first()
         if user.type == "freemium":
             return PredictModel.query.all()
         else:
@@ -84,7 +84,7 @@ class PredictByIdFreemium(MethodView):
     @freemiumBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
         current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(username=current_user).first()
+        user = UserModel.query.filter_by(id=current_user).first()
         if user.type == "freemium":
             return PredictModel.query.get_or_404(predict_id)
         else:

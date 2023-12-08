@@ -47,7 +47,7 @@ class PredictPremium(MethodView):
     @premiumBlp.response(200, PredictFinishedSchema)
     def get(self):
         current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(username=current_user).first()
+        user = UserModel.query.filter_by(id=current_user).first()
         if user.type == "premium":
             return PredictModel.query.all()
         else:
@@ -55,9 +55,10 @@ class PredictPremium(MethodView):
     
     @jwt_required(fresh=True)
     @premiumBlp.arguments(PredictSchema)
+    @premiumBlp.response(200, PredictFinishedSchema)
     def post(self, predict_data):
         current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(username=current_user).first()
+        user = UserModel.query.filter_by(id=current_user).first()
         if user.type == "premium":
             prediction = PredictModel(**predict_data)
             #en base al modelo neuronal, predecir el riesgo cardiaco, y agregarle el valor final a la instancia de la clase
@@ -82,7 +83,7 @@ class PredictByIdPremium(MethodView):
     @premiumBlp.response(200, PredictFinishedSchema)
     def get(self, predict_id: str):
         current_user = get_jwt_identity()
-        user = UserModel.query.filter_by(username=current_user).first()
+        user = UserModel.query.filter_by(id=current_user).first()
         if user.type == "premium":
             return PredictModel.query.get_or_404(predict_id)
         else:
