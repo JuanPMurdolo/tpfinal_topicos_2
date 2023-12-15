@@ -28,8 +28,8 @@ X_train, X_test, Y_train, Y_test = train_test_split(
 model = models.Sequential()
 
 # Añado de a una capa
-model.add(Dense(32, input_dim=7, activation="relu"))
-model.add(Dense(16, activation="relu"))
+model.add(Dense(14, input_dim=7, activation="relu"))
+model.add(Dense(7, activation="relu"))
 model.add(Dense(1, activation="sigmoid"))
 
 # Compilamos el modelo
@@ -37,8 +37,8 @@ model.compile(optimizer=Adam(),
               loss='binary_crossentropy', metrics='accuracy')
 
 # Entrenamos el modelo
-history = model.fit(X_train, Y_train, epochs=100,
-                    batch_size=12, validation_data=(X_test, Y_test))
+history = model.fit(X_train, Y_train, epochs=150,
+                    batch_size=8, validation_data=(X_test, Y_test))
 
 # Evaluamos el modelo
 test_loss = model.evaluate(X_test, Y_test)
