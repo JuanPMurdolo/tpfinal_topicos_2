@@ -1,5 +1,5 @@
-from keras import models
 import tensorflow as tf
+from keras.models import Sequential
 from keras.layers import Dense
 from keras.optimizers import Adam
 import numpy as np
@@ -25,19 +25,22 @@ X_train, X_test, Y_train, Y_test = train_test_split(
     X, Y, test_size=0.2, random_state=42)
 
 # Creo el modelo
-model = models.Sequential()
+model = Sequential()
 
 # Añado de a una capa
-model.add(Dense(64, input_dim=7, activation="relu"))
-model.add(Dense(64, activation="relu"))
+model.add(Dense(14, input_dim=7, activation="relu"))
+model.add(Dense(7, activation="relu"))
 model.add(Dense(1, activation="sigmoid"))
 
 # Compilamos el modelo
 model.compile(optimizer=Adam(),
               loss='binary_crossentropy', metrics='accuracy')
 
+# Imprimos el modelo
+# model.summary()
+
 # Entrenamos el modelo
-history = model.fit(X_train, Y_train, epochs=70,
+history = model.fit(X_train, Y_train, epochs=150,
                     batch_size=8, validation_data=(X_test, Y_test))
 
 # Evaluamos el modelo
