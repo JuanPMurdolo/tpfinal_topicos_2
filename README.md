@@ -67,6 +67,14 @@ Si.
  
 
 
+# Definición del modelo
+
+A continuación presentamos el diagrama con la arquitectura de la red neuronal que entrenamos para resolver la clasificación: 
+
+
+Si imprimimos un resumen del modelo secuencial obtenemos: 
+
+
 
 # Notas de los alumnos
 
