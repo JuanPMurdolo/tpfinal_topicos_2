@@ -1,10 +1,6 @@
-# tpfinal_topicos_2
-Trabajo final de topicos 2
+# Trabajo final de Topicos de Ingeniería de Software 2
 
-
-Topicos de Ingeniería de Software 2
-
-Enunciado
+# Enunciado
 Este trabajo integrador consiste en el desarrollo de un servicio Web (API) que expone un modelo de red neuronal para clasificar los parámetros del servicio:
 
 El modelo diagnostica riesgo cardíaco (si el paciente tiene o no-tiene riesgo cardíaco) a partir de los datos clínicos del paciente (nivel de colesterol, presión arterial, nivel de azúcar en sangre, edad, sobrepeso y tabaquismo ) .
