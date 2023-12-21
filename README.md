@@ -71,9 +71,12 @@ Si.
 
 A continuación presentamos el diagrama con la arquitectura de la red neuronal que entrenamos para resolver la clasificación: 
 
+![Alt text](imagenes/model1.png?raw=true "Title")
+
 
 Si imprimimos un resumen del modelo secuencial obtenemos: 
 
+![Alt text](imagenes/model2.png?raw=true "Title")
 
 
 # Notas de los alumnos
@@ -83,7 +86,7 @@ Vamos a usar SQLITE3 para no usar mongo por una cuestion de comodidad.
 # Instrucciones
 * Para correr el entrenamiento hay que mover el archivo datos_de_pacientes_5000.csv a la carpeta redesNeuronales.
 * Se puede correr con un venv, o se puede directamente instalar todo lo necesario eso es a gusto.
-* Se puede utilizar postman, hay una coleccion en /Servicios que funciona. Para correrlo es necesario registrar un usuario, logearse y utilizar el token.
+* Se puede utilizar postman, hay una coleccion en /Servicios/Topicos 2.postman_collection que funciona. Para correrlo es necesario registrar un usuario, logearse y utilizar el token.
 * Se puede cambiar el tipo de usuario de freemium a premium y viceversa.
 
 # Como correr el programa
