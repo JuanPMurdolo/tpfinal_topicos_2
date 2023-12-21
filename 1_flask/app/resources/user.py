@@ -79,10 +79,10 @@ class UserLogin(MethodView):
         else:
             abort(401, message="Invalid username or password.")
 
-@blp.route("/refresh")
+@userBlp.route("/refresh")
 class UserRefresh(MethodView):
     @jwt_required(refresh=True)
-    @blp.response(200, UserSchema)
+    @userBlp.response(200, UserSchema)
     def post(self):
         user = get_jwt_identity()
         access_token = create_access_token(identity=user, fresh=False)
