@@ -1,4 +1,7 @@
-# Trabajo final de Topicos de Ingeniería de Software 2
+# Trabajo final de Topicos de Ingeniería de Software 2 
+
+Gregorio Abraham Jurado (Eliasfire)
+Juan Pablo Murdolo (JuanPMurdolo)
 
 # Enunciado
 Este trabajo integrador consiste en el desarrollo de un servicio Web (API) que expone un modelo de red neuronal para clasificar los parámetros del servicio:
